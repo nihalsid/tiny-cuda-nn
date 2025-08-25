@@ -206,6 +206,8 @@ def make_extension(compute_capability):
 
 	nvcc_flags = nvcc_flags + definitions
 	cflags = base_cflags + definitions
+	nvcc_flags += ["-I" + os.environ.get("CUDA_INCLUDE", "")]
+	nvcc_flags += ["-I" + os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib/glm/")]
 
 	ext = CUDAExtension(
 		name=f"tinycudann_bindings._{compute_capability}_C",
@@ -216,6 +218,7 @@ def make_extension(compute_capability):
 			f"{root_dir}/dependencies/cutlass/include",
 			f"{root_dir}/dependencies/cutlass/tools/util/include",
 			f"{root_dir}/dependencies/fmt/include",
+			os.environ.get("CUDA_INCLUDE", "")
 		],
 		extra_compile_args={"cxx": cflags, "nvcc": nvcc_flags},
 		libraries=["cuda", "nvrtc"],
